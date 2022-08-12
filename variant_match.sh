@@ -13,6 +13,10 @@ bcftools norm --check-ref e -f human_g1k_v37.fasta testQC.vcf -Ou -o test
 # >> Reference allele mismatch at 1:909238 .. REF_SEQ:'G' vs VCF:'C'
 
 
+# Convert vcf to bcf:
+bcftools view testQC.vcf -Ob > output.bcf
+
+
 
 
 # Swap the alleles:
@@ -20,8 +24,8 @@ bcftools +fixref output.bcf -Ob -o fixref.bcf  -- -d -f human_g1k_v37.fasta -i A
 
 
 
-# Sort the VCF:
-sort fixref.bcf -Ob -o fixref.sorted.bcf
+# Sort the bcf:
+bcftools sort fixref.bcf -Ob -o fixref.sorted.bcf
 
 # Convert bcf to vcf:
 bcftools view fixref.sorted.bcf -Ov > fixref.sorted.vcf
