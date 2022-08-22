@@ -14,13 +14,13 @@ bcftools norm --check-ref e -f human_g1k_v37.fasta testQC.vcf -Ou -o test
 
 
 # Convert vcf to bcf:
-bcftools view testQC.vcf -Ob > output.bcf
+bcftools view testQC.vcf > testQC.broken.bcf
 
 
 
 
 # Swap the alleles:
-bcftools +fixref output.bcf -Ob -o fixref.bcf  -- -d -f human_g1k_v37.fasta -i All_20180423.vcf.gz
+bcftools +fixref testQC.broken.bcf -Ob -o fixref.bcf  -- -d -f human_g1k_v37.fasta -i All_20180423.vcf.gz
 
 
 
