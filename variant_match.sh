@@ -8,6 +8,8 @@ wget ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/technical/reference/human_g1k_v37.
 
 gunzip All_20180423.vcf.gz
 
+zcat All_20180423.vcf.gz | grep -v '^#' | cut -f 3,4 > reference_allele_All_20180423_GRCh37.txt
+
 # Checking the reference allele mismatches:
 bcftools norm --check-ref e -f human_g1k_v37.fasta testQC.vcf -Ou -o test
 # >> Reference allele mismatch at 1:909238 .. REF_SEQ:'G' vs VCF:'C'
@@ -15,7 +17,7 @@ bcftools norm --check-ref e -f human_g1k_v37.fasta testQC.vcf -Ou -o test
 
 # Convert vcf to bcf:
 bcftools view testQC.vcf > testQC.broken.bcf
-
+plink --bed /BiO/00_original_data/2_2019_UK_biobank/download_genotypes/ukb_cal_chr1_v2.bed --bim /BiO/00_original_data/2_2019_UK_biobank/download_genotypes/ukb_snp_chr1_v2.bim --fam /BiO/00_original_data/2_2019_UK_biobank/download_genotypes/ukb48422_cal_chr1_v2_s488288.fam --a2-allele reference_allele_All_20180423_GRCh37.txt --make-bed --keep ../final/base_with_eve.fam --recode vcf --out ref_chr1
 
 
 
