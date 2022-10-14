@@ -10,26 +10,16 @@ gunzip All_20180423.vcf.gz
 
 zcat All_20180423.vcf.gz | grep -v '^#' | cut -f 3,4 > reference_allele_All_20180423_GRCh37.txt
 
-# Checking the reference allele mismatches:
-bcftools norm --check-ref e -f human_g1k_v37.fasta testQC.vcf -Ou -o test
-# >> Reference allele mismatch at 1:909238 .. REF_SEQ:'G' vs VCF:'C'
 
 
-# Convert vcf to bcf:
-bcftools view testQC.vcf > testQC.broken.bcf
-plink --bed /BiO/00_original_data/2_2019_UK_biobank/download_genotypes/ukb_cal_chr1_v2.bed --bim /BiO/00_original_data/2_2019_UK_biobank/download_genotypes/ukb_snp_chr1_v2.bim --fam /BiO/00_original_data/2_2019_UK_biobank/download_genotypes/ukb48422_cal_chr1_v2_s488288.fam --a2-allele reference_allele_All_20180423_GRCh37.txt --make-bed --keep ../final/base_with_eve.fam --recode vcf --out ref_chr1
+bgzip -c test_vcf.vcf > input_test.vcf.gz
+bcftools index input_test.vcf.gz
 
+bcftools +fixref -Oz input_test.vcf.gz -- -f human_g1k_v37.fasta
 
+bcftools norm --check-ref -s -f human_g1k_v37.fasta input_test.vcf.gz > output.vcf
 
-# Swap the alleles:
-bcftools +fixref testQC.broken.bcf -Ob -o fixref.bcf  -- -d -f human_g1k_v37.fasta -i All_20180423.vcf.gz
+bgzip -c output.vcf > output.vcf.gz
+bcftools index output.vcf.gz
 
-
-
-# Sort the bcf:
-bcftools sort fixref.bcf -Ob -o fixref.sorted.bcf
-
-# Convert bcf to vcf:
-bcftools view fixref.sorted.bcf -Ov > fixref.sorted.vcf
-
-
+bcftools +fixref -Oz output.vcf.gz -- -f human_g1k_v37.fasta
